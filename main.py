@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import json
 from datetime import datetime, time
 import os
 import asyncio
@@ -10,12 +9,6 @@ BASSANO = "Monitor?placeId=602&arrivals=False"
 PORTO_MARGHERA = "Monitor?placeId=3004&arrivals=False"
 MESTRE = "Monitor?placeId=3002&arrivals=False"
 VENEZIA_SANTA_LUCIA = "Monitor?placeId=3009&arrivals=False"
-
-Treni_Bassano = []
-Treni_Porto_Marghera = []
-Treni_Mestre = []
-Treni_Venezia = []
-
 
 # MODIFICA QUESTA FUNZIONE COSÌ:
 async def send_telegram_alert(messaggio):
@@ -34,7 +27,7 @@ async def send_telegram_alert(messaggio):
         print("Errore: Token o Chat ID non trovati nelle variabili d'ambiente.")
 
 
-def take_information(Treni, todo, stazione, stazione_arrivo):
+def take_information( todo, stazione, stazione_arrivo):
     if todo:
         righe = todo.find_all('tr')
 
@@ -123,7 +116,7 @@ def start():
         content = r.text#lo converto in un testo
         soup = BeautifulSoup(content, 'html.parser')
         todo = soup.find('tbody')#prendo solamente ciò che mi interessa
-        take_information(Treni_Bassano, todo, "BASSANO DEL GRAPPA", "VENEZIA S.LUCIA")#faccio prendere le informazioni che mi interessano
+        take_information( todo, "BASSANO DEL GRAPPA", "VENEZIA S.LUCIA")#faccio prendere le informazioni che mi interessano
 
 
 
@@ -133,7 +126,7 @@ def start():
         content = r.text
         soup = BeautifulSoup(content, 'html.parser')
         todo = soup.find('tbody')
-        take_information(Treni_Mestre, todo, "MESTRE", "BASSANO DEL GRAPPA")
+        take_information( todo, "MESTRE", "BASSANO DEL GRAPPA")
 
     #Partenze da Venezia_porto_margera
     if (check_orario_consentito(13, 00, 18, 00)):
@@ -141,7 +134,7 @@ def start():
         content = r.text
         soup = BeautifulSoup(content, 'html.parser')
         todo = soup.find('tbody')
-        take_information(Treni_Porto_Marghera, todo, "VENEZIA PORTO MARGHERA", "BASSANO DEL GRAPPA")
+        take_information( todo, "VENEZIA PORTO MARGHERA", "BASSANO DEL GRAPPA")
 
 
     #Partenze da Venezia_santa_lucia 
@@ -150,7 +143,7 @@ def start():
         content = r.text
         soup = BeautifulSoup(content, 'html.parser')
         todo = soup.find('tbody')
-        take_information(Treni_Venezia, todo, "VENEZIA SANTA LUCIA", "BASSANO DEL GRAPPA")
+        take_information( todo, "VENEZIA SANTA LUCIA", "BASSANO DEL GRAPPA")
 
 if __name__ == "__main__":
     asyncio.run(send_telegram_alert("ti invio un mess"))
