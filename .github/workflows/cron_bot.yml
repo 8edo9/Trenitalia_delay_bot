@@ -1,0 +1,29 @@
+name: Monitor Treni Bassano
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Gira ogni 5 minuti
+  workflow_dispatch:        # Ti permette di testarlo a mano
+
+jobs:
+  run-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codice
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Installa librerie
+        run: pip install requests beautifulsoup4 python-telegram-bot
+
+      - name: Esegui lo script
+        env:
+          # QUI C'È IL TRUCCO: 
+          # Colleghiamo i Secrets di GitHub alle variabili che Python leggerà
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py  # <-- ATTENZIONE: metti il nome reale del tuo file .py
